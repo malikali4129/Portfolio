@@ -1,2 +1,2 @@
 Personal Portfolio Website
-LINK :- aboutmalik.com
+LINK :- https://aboutmalik.com/
