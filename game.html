@@ -26,6 +26,8 @@
       max-width: 400px;
       width: 100%;
       animation: fadeIn 1s ease-in-out;
+      position: relative;
+      z-index: 1;
     }
     h1 {
       font-size: 2.5rem;
@@ -82,6 +84,54 @@
       from { opacity: 0; transform: translateX(-20px); }
       to { opacity: 1; transform: translateX(0); }
     }
+
+    /* Fireworks Animation */
+    .firework {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ff0;
+      border-radius: 50%;
+      animation: explode 1s ease-out infinite;
+      z-index: 0;
+    }
+    @keyframes explode {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(10); opacity: 0; }
+    }
+
+    /* Popup Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      z-index: 1000;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .modal h2 {
+      color: #333;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    .modal p {
+      color: #555;
+      font-size: 1.2rem;
+    }
+    .modal button {
+      margin-top: 20px;
+      background: #6a11cb;
+      color: white;
+    }
+    .modal button:hover {
+      background: #2575fc;
+    }
   </style>
 </head>
 <body>
@@ -93,9 +143,19 @@
     <p class="message" id="message"></p>
   </div>
 
+  <!-- Fireworks -->
+  <div id="fireworks"></div>
+
+  <!-- Popup Modal -->
+  <div id="congratsModal" class="modal">
+    <h2>🎉 Congratulations! 🎉</h2>
+    <p>You guessed the number in <span id="attemptCount"></span> attempts!</p>
+    <button onclick="resetGame()">Play Again</button>
+  </div>
+
   <script>
     // Generate a random number between 1 and 100
-    const randomNumber = Math.floor(Math.random() * 100) + 1;
+    let randomNumber = Math.floor(Math.random() * 100) + 1;
     let attempts = 0;
 
     function checkGuess() {
@@ -114,6 +174,8 @@
         message.textContent = `🎉 Congratulations! You guessed the number in ${attempts} attempts.`;
         message.style.color = "#4caf50";
         guessInput.disabled = true;
+        showFireworks();
+        showCongratsModal();
       } else if (userGuess < randomNumber) {
         message.textContent = "Too low! Try again.";
         message.style.color = "#ff4a3d";
@@ -123,6 +185,42 @@
       }
 
       guessInput.value = ''; // Clear the input field
+    }
+
+    // Show Fireworks
+    function showFireworks() {
+      const fireworksContainer = document.getElementById('fireworks');
+      for (let i = 0; i < 50; i++) {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.left = `${Math.random() * 100}vw`;
+        firework.style.top = `${Math.random() * 100}vh`;
+        firework.style.animationDelay = `${Math.random()}s`;
+        fireworksContainer.appendChild(firework);
+      }
+    }
+
+    // Show Congrats Modal
+    function showCongratsModal() {
+      const modal = document.getElementById('congratsModal');
+      const attemptCount = document.getElementById('attemptCount');
+      attemptCount.textContent = attempts;
+      modal.style.display = 'block';
+    }
+
+    // Reset Game
+    function resetGame() {
+      const modal = document.getElementById('congratsModal');
+      const fireworksContainer = document.getElementById('fireworks');
+      const guessInput = document.getElementById('guessInput');
+      const message = document.getElementById('message');
+
+      modal.style.display = 'none';
+      fireworksContainer.innerHTML = '';
+      guessInput.disabled = false;
+      message.textContent = '';
+      randomNumber = Math.floor(Math.random() * 100) + 1;
+      attempts = 0;
     }
   </script>
 </body>
